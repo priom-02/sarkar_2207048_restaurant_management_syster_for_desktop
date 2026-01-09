@@ -10,6 +10,8 @@ module com.example.restaurantmanagement {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires java.sql;
+    // requires org.xerial.sqlitejdbc; // Removed to avoid "module not found" error if not on module path
 
     opens com.example.restaurantmanagement to javafx.fxml;
     exports com.example.restaurantmanagement;

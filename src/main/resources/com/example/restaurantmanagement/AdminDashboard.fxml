@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.restaurantmanagement.AdminDashboard">
+    <center>
+        <Label text="Welcome to Admin Dashboard" style="-fx-font-size: 24px;"/>
+    </center>
+</BorderPane>

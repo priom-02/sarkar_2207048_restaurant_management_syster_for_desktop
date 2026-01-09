@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
@@ -27,9 +28,12 @@
         </items>
     </ComboBox>
 
-    <TextField fx:id="usernameField" promptText="Username" maxWidth="200.0"/>
+    <TextField fx:id="usernameField" promptText="Username / Email" maxWidth="200.0"/>
     <PasswordField fx:id="passwordField" promptText="Password" maxWidth="200.0"/>
 
     <Button text="Login" onAction="#onLoginButtonClick" prefWidth="100.0"/>
+
+    <Hyperlink text="New User? Register here" onAction="#onRegisterLinkClick"/>
+
     <Label fx:id="statusLabel" textFill="red"/>
 </VBox>
