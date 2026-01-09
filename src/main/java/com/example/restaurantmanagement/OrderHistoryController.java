@@ -17,11 +17,6 @@ public class OrderHistoryController {
         refreshOrderHistory();
     }
 
-    @FXML
-    protected void onRefreshHistoryClick() {
-        refreshOrderHistory();
-    }
-
     private void refreshOrderHistory() {
         if (orderHistoryListView == null) return;
         List<String> history = DatabaseHelper.getOrderHistory(dashboardController.getCurrentUserEmail());

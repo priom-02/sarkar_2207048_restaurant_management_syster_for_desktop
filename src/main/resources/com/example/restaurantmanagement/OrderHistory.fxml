@@ -17,6 +17,5 @@
     </HBox>
 
     <Label text="Your Past Orders" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
-    <Button text="Refresh History" onAction="#onRefreshHistoryClick"/>
     <ListView fx:id="orderHistoryListView" VBox.vgrow="ALWAYS"/>
 </VBox>
