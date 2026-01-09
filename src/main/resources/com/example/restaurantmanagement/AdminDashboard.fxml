@@ -1,10 +1,124 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.restaurantmanagement.AdminDashboard">
+    <top>
+        <HBox style="-fx-background-color: #222; -fx-padding: 10;" alignment="CENTER_LEFT">
+            <Label text="Admin Dashboard" style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Logout" onAction="#onLogoutClick" style="-fx-background-color: #d9534f; -fx-text-fill: white;"/>
+        </HBox>
+    </top>
+
+    <left>
+        <VBox spacing="10" style="-fx-background-color: #f0f0f0; -fx-padding: 10; -fx-pref-width: 150;">
+            <Button text="View Menu" onAction="#onViewMenuClick" maxWidth="Infinity"/>
+            <Button text="Add Item" onAction="#onAddItemClick" maxWidth="Infinity"/>
+            <Button text="View Orders" onAction="#onViewOrdersClick" maxWidth="Infinity"/>
+        </VBox>
+    </left>
+
     <center>
-        <Label text="Welcome to Admin Dashboard" style="-fx-font-size: 24px;"/>
+        <StackPane>
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <!-- View Menu View -->
+            <VBox fx:id="viewMenuView" spacing="10" visible="true">
+                <Label text="Menu Management" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+                <SplitPane dividerPositions="0.4" VBox.vgrow="ALWAYS">
+                    <VBox spacing="10">
+                        <padding>
+                            <Insets top="10" right="10" bottom="10" left="10"/>
+                        </padding>
+                        <Label text="Menu Items" style="-fx-font-weight: bold;"/>
+                        <ListView fx:id="menuListView" VBox.vgrow="ALWAYS"/>
+                    </VBox>
+                    <VBox spacing="10">
+                        <padding>
+                            <Insets top="10" right="10" bottom="10" left="10"/>
+                        </padding>
+                        <Label text="Edit Item" style="-fx-font-weight: bold;"/>
+
+                        <TextField fx:id="editNameField" promptText="Item Name"/>
+                        <TextField fx:id="editCategoryField" promptText="Category"/>
+                        <TextField fx:id="editPriceField" promptText="Price"/>
+                        <ComboBox fx:id="editStatusComboBox" promptText="Status" prefWidth="200"/>
+                        <TextArea fx:id="editDescriptionField" promptText="Description" prefRowCount="3"/>
+
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Button text="Change Image" onAction="#onEditChooseImageClick"/>
+                            <Label fx:id="editImagePathLabel" text="No image"/>
+                        </HBox>
+
+                        <HBox spacing="10">
+                            <Button text="Update" onAction="#onUpdateClick"/>
+                            <Button text="Delete" onAction="#onDeleteClick"/>
+                        </HBox>
+                        <Label fx:id="editStatusLabel" textFill="red"/>
+                    </VBox>
+                </SplitPane>
+            </VBox>
+
+            <!-- Add Item View -->
+            <VBox fx:id="addItemView" spacing="15" visible="false">
+                <Label text="Add New Menu Item" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+
+                <VBox spacing="5" maxWidth="400">
+                    <Label text="Item Name:"/>
+                    <TextField fx:id="addNameField"/>
+                </VBox>
+
+                <VBox spacing="5" maxWidth="400">
+                    <Label text="Category:"/>
+                    <TextField fx:id="addCategoryField"/>
+                </VBox>
+
+                <VBox spacing="5" maxWidth="400">
+                    <Label text="Price:"/>
+                    <TextField fx:id="addPriceField"/>
+                </VBox>
+
+                <VBox spacing="5" maxWidth="400">
+                    <Label text="Status:"/>
+                    <ComboBox fx:id="addStatusComboBox" prefWidth="200"/>
+                </VBox>
+
+                <VBox spacing="5" maxWidth="400">
+                    <Label text="Description:"/>
+                    <TextArea fx:id="addDescriptionField" prefRowCount="3"/>
+                </VBox>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Button text="Choose Image" onAction="#onAddChooseImageClick"/>
+                    <Label fx:id="addImagePathLabel" text="No image selected"/>
+                </HBox>
+
+                <Button text="Add Item" onAction="#onAddClick" prefWidth="100"/>
+                <Label fx:id="addStatusLabel" textFill="red"/>
+            </VBox>
+
+            <!-- View Orders View -->
+            <VBox fx:id="viewOrdersView" spacing="10" visible="false">
+                <Label text="All Customer Orders" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+                <Button text="Refresh Orders" onAction="#onRefreshOrdersClick"/>
+                <ListView fx:id="allOrdersListView" VBox.vgrow="ALWAYS"/>
+            </VBox>
+
+        </StackPane>
     </center>
 </BorderPane>

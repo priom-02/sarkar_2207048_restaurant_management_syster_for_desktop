@@ -12,87 +12,78 @@ import java.io.IOException;
 
 public class SigninActivityForUser {
 
-    @FXML
-    private TextField nameField;
-
-    @FXML
-    private TextField emailField;
-
-    @FXML
-    private PasswordField passwordField;
-
-    @FXML
-    private Label statusLabel;
+    @FXML private TextField nameField;
+    @FXML private TextField emailField;
+    @FXML private TextField mobileField;
+    @FXML private TextField addressField;
+    @FXML private PasswordField passwordField;
+    @FXML private PasswordField confirmPasswordField;
+    @FXML private Label statusLabel;
 
     @FXML
     public void initialize() {
         // Ensure database is initialized when this screen is loaded
         if (!DatabaseHelper.initializeDatabase()) {
-            if (statusLabel != null) {
-                statusLabel.setText("DB Init Failed: " + DatabaseHelper.getLastError());
-                statusLabel.setStyle("-fx-text-fill: red;");
-            }
+            statusLabel.setText("DB Init Failed: " + DatabaseHelper.getLastError());
+            statusLabel.setStyle("-fx-text-fill: red;");
         }
     }
 
     @FXML
     protected void onRegisterButtonClick() {
-        String name = nameField != null ? nameField.getText() : "";
-        String email = emailField != null ? emailField.getText() : "";
-        String password = passwordField != null ? passwordField.getText() : "";
+        String name = nameField.getText();
+        String email = emailField.getText();
+        String mobile = mobileField.getText();
+        String address = addressField.getText();
+        String password = passwordField.getText();
+        String confirmPassword = confirmPasswordField.getText();
 
-        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            if (statusLabel != null) {
-                statusLabel.setText("Please fill in all fields.");
-                statusLabel.setStyle("-fx-text-fill: red;");
-            }
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+            statusLabel.setText("Please fill in all required fields.");
+            statusLabel.setStyle("-fx-text-fill: red;");
             return;
         }
 
-        if (DatabaseHelper.registerUser(name, email, password)) {
-            if (statusLabel != null) {
-                statusLabel.setText("Registration successful!");
-                statusLabel.setStyle("-fx-text-fill: green;");
-            }
+        if (!password.equals(confirmPassword)) {
+            statusLabel.setText("Passwords do not match.");
+            statusLabel.setStyle("-fx-text-fill: red;");
+            return;
+        }
+
+        if (DatabaseHelper.registerUser(name, email, password, mobile, address)) {
+            statusLabel.setText("Registration successful!");
+            statusLabel.setStyle("-fx-text-fill: green;");
             clearFields();
         } else {
             String error = DatabaseHelper.getLastError();
-            if (statusLabel != null) {
-                if (error != null && error.contains("UNIQUE constraint failed")) {
-                    statusLabel.setText("Email already taken.");
-                } else {
-                    statusLabel.setText("Database Error: " + error);
-                }
-                statusLabel.setStyle("-fx-text-fill: red;");
+            if (error.contains("UNIQUE constraint failed")) {
+                statusLabel.setText("Email already taken.");
+            } else {
+                statusLabel.setText("Database Error: " + error);
             }
+            statusLabel.setStyle("-fx-text-fill: red;");
         }
     }
 
     @FXML
     protected void onBackButtonClick() {
         try {
-            Stage stage;
-            if (nameField != null && nameField.getScene() != null) {
-                stage = (Stage) nameField.getScene().getWindow();
-            } else if (statusLabel != null && statusLabel.getScene() != null) {
-                stage = (Stage) statusLabel.getScene().getWindow();
-            } else {
-                stage = new Stage();
-            }
-
+            Stage stage = (Stage) nameField.getScene().getWindow();
             FXMLLoader fxmlLoader = new FXMLLoader(UserLogin.class.getResource("UserLogin.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 400, 400);
             stage.setTitle("Login - Restaurant Management");
             stage.setScene(scene);
-            stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void clearFields() {
-        if (nameField != null) nameField.clear();
-        if (emailField != null) emailField.clear();
-        if (passwordField != null) passwordField.clear();
+        nameField.clear();
+        emailField.clear();
+        mobileField.clear();
+        addressField.clear();
+        passwordField.clear();
+        confirmPasswordField.clear();
     }
 }

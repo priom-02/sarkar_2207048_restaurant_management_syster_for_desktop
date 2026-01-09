@@ -4,13 +4,21 @@ public class User {
     private int id;
     private String name;
     private String email;
+    private String mobile;
+    private String address;
 
     public User() {}
 
     public User(int id, String name, String email) {
+        this(id, name, email, null, null);
+    }
+
+    public User(int id, String name, String email, String mobile, String address) {
         this.id = id;
         this.name = name;
         this.email = email;
+        this.mobile = mobile;
+        this.address = address;
     }
 
     public int getId() { return id; }
@@ -21,5 +29,10 @@ public class User {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
-}
 
+    public String getMobile() { return mobile; }
+    public void setMobile(String mobile) { this.mobile = mobile; }
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+}

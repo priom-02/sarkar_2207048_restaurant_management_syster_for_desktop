@@ -18,7 +18,7 @@ public class UserLogin extends Application {
     private ComboBox<String> roleComboBox;
 
     @FXML
-    private TextField usernameField; // Changed back to usernameField to match FXML
+    private TextField usernameField;
 
     @FXML
     private PasswordField passwordField;
@@ -68,7 +68,6 @@ public class UserLogin extends Application {
             } else if (statusLabel != null && statusLabel.getScene() != null) {
                 stage = (Stage) statusLabel.getScene().getWindow();
             } else {
-                // As a fallback, open a new stage
                 stage = new Stage();
             }
 
@@ -83,13 +82,11 @@ public class UserLogin extends Application {
     }
 
     private void handleAdminLogin(String email, String password) {
-        // Hardcoded admin login (admin@gmail.com / admin123 per requirements)
         if ("admin@gmail.com".equals(email) && "admin123".equals(password)) {
             if (statusLabel != null) {
                 statusLabel.setText("Admin login successful!");
                 statusLabel.setStyle("-fx-text-fill: green;");
             }
-            // Navigate to Admin Dashboard
             try {
                 Stage stage = (Stage) usernameField.getScene().getWindow();
                 FXMLLoader fxmlLoader = new FXMLLoader(AdminDashboard.class.getResource("AdminDashboard.fxml"));
@@ -113,11 +110,15 @@ public class UserLogin extends Application {
                 statusLabel.setText("User login successful!");
                 statusLabel.setStyle("-fx-text-fill: green;");
             }
-            // Navigate to User Dashboard
             try {
                 Stage stage = (Stage) usernameField.getScene().getWindow();
                 FXMLLoader fxmlLoader = new FXMLLoader(UserDashboard.class.getResource("UserDashboard.fxml"));
                 Scene scene = new Scene(fxmlLoader.load(), 800, 600);
+                
+                // Pass the logged-in user's email to the dashboard controller
+                UserDashboard controller = fxmlLoader.getController();
+                controller.setCurrentUserEmail(email);
+                
                 stage.setTitle("User Dashboard - Restaurant Management");
                 stage.setScene(scene);
             } catch (IOException ex) {
