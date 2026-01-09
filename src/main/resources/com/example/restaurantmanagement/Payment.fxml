@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.restaurantmanagement.PaymentController" spacing="20" alignment="CENTER">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
+        <Button text="&lt; Back to Cart" onAction="#onBackClick"/>
+    </HBox>
+
+    <VBox spacing="15" alignment="CENTER" VBox.vgrow="ALWAYS">
+        <Label text="Select Payment Method" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+        <Label text="Total Amount:" style="-fx-font-size: 16px;"/>
+        <Label fx:id="paymentTotalLabel" text="\$0.00" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #28a745;"/>
+
+        <Button text="Cash on Delivery" onAction="#onCashOnDeliveryClick" prefWidth="200" prefHeight="40"/>
+        <Button text="By Card" onAction="#onByCardClick" prefWidth="200" prefHeight="40"/>
+        <Button text="By Online" onAction="#onByOnlineClick" prefWidth="200" prefHeight="40"/>
+
+        <Label fx:id="paymentStatusLabel" textFill="red"/>
+    </VBox>
+</VBox>

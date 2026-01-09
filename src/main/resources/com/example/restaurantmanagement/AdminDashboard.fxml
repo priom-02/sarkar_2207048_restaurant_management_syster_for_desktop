@@ -76,6 +76,9 @@
 
             <!-- Add Item View -->
             <VBox fx:id="addItemView" spacing="15" visible="false">
+                <HBox alignment="CENTER_LEFT">
+                    <Button text="&lt; Back" onAction="#onViewMenuClick"/>
+                </HBox>
                 <Label text="Add New Menu Item" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
 
                 <VBox spacing="5" maxWidth="400">
@@ -114,6 +117,9 @@
 
             <!-- View Orders View -->
             <VBox fx:id="viewOrdersView" spacing="10" visible="false">
+                <HBox alignment="CENTER_LEFT">
+                    <Button text="&lt; Back" onAction="#onViewMenuClick"/>
+                </HBox>
                 <Label text="All Customer Orders" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
                 <Button text="Refresh Orders" onAction="#onRefreshOrdersClick"/>
                 <ListView fx:id="allOrdersListView" VBox.vgrow="ALWAYS"/>
