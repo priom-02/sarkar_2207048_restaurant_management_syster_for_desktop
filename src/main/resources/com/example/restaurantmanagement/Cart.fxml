@@ -4,30 +4,34 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.restaurantmanagement.CartController" spacing="10">
-    <padding>
-        <Insets top="10" right="10" bottom="10" left="10"/>
-    </padding>
+<ScrollPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.restaurantmanagement.CartController" fitToWidth="true" fitToHeight="true">
+    <VBox spacing="10" alignment="TOP_CENTER">
+        <padding>
+            <Insets top="10" right="10" bottom="10" left="10"/>
+        </padding>
 
-    <HBox alignment="CENTER_LEFT">
-        <Button text="&lt; Back" onAction="#onBackClick"/>
-    </HBox>
+        <HBox alignment="CENTER_LEFT">
+            <Button text="&lt; Back" onAction="#onBackClick"/>
+        </HBox>
 
-    <Label text="Current Order (Cart)" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
-    <ListView fx:id="cartListView" VBox.vgrow="ALWAYS"/>
+        <Label text="Current Order (Cart)" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
 
-    <HBox spacing="10" alignment="CENTER_RIGHT">
-        <Label text="Total: " style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-        <Label fx:id="cartTotalLabel" text="\$0.00" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-    </HBox>
+        <ListView fx:id="cartListView" VBox.vgrow="ALWAYS"/>
 
-    <HBox spacing="10">
-        <Region HBox.hgrow="ALWAYS"/>
-        <Button text="Proceed to Payment" onAction="#onProceedToPaymentClick" style="-fx-background-color: green; -fx-text-fill: white;"/>
-    </HBox>
-    <Label fx:id="cartStatusLabel" textFill="blue"/>
-</VBox>
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <Label text="Total: " style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+            <Label fx:id="cartTotalLabel" text="\$0.00" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+        </HBox>
+
+        <HBox spacing="10" alignment="CENTER">
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Proceed to Payment" onAction="#onProceedToPaymentClick" style="-fx-background-color: green; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;"/>
+        </HBox>
+        <Label fx:id="cartStatusLabel" textFill="blue"/>
+    </VBox>
+</ScrollPane>

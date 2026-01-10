@@ -13,9 +13,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.LinkedHashMap;
 
 public class DatabaseHelper {
     private static final String DB_URL = "jdbc:sqlite:restaurant_management.db";
@@ -43,6 +43,9 @@ public class DatabaseHelper {
             stmt.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, email TEXT NOT NULL UNIQUE, password TEXT NOT NULL, role TEXT DEFAULT 'User', mobile TEXT, address TEXT);");
             stmt.execute("CREATE TABLE IF NOT EXISTS menu_items (id INTEGER PRIMARY KEY AUTOINCREMENT, item_name TEXT NOT NULL, category TEXT, price REAL NOT NULL, status TEXT DEFAULT 'Available', description TEXT, image_path TEXT);");
             stmt.execute("CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY AUTOINCREMENT, transaction_id TEXT NOT NULL, user_email TEXT NOT NULL, item_name TEXT NOT NULL, quantity INTEGER NOT NULL, total_price REAL NOT NULL, order_date TEXT DEFAULT CURRENT_TIMESTAMP, status TEXT DEFAULT 'Pending');");
+            
+            // **FIX**: Ensure ratings table is created
+            stmt.execute("CREATE TABLE IF NOT EXISTS ratings (id INTEGER PRIMARY KEY AUTOINCREMENT, user_email TEXT NOT NULL, item_name TEXT NOT NULL, rating INTEGER NOT NULL, UNIQUE(user_email, item_name));");
 
             // Migrations
             try { stmt.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'User';"); } catch (SQLException ignore) {}
@@ -60,7 +63,74 @@ public class DatabaseHelper {
         }
     }
 
-    // **FIX**: Added more robust error checking and logging
+    // --- Rating Methods ---
+
+    public static boolean addRating(String userEmail, String itemName, int rating) {
+        String sql = "INSERT OR REPLACE INTO ratings(user_email, item_name, rating) VALUES(?, ?, ?)";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, userEmail);
+            pstmt.setString(2, itemName);
+            pstmt.setInt(3, rating);
+            pstmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            lastError = "Add Rating Error: " + e.getMessage();
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static double getAverageRating(String itemName) {
+        String sql = "SELECT AVG(rating) FROM ratings WHERE item_name = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, itemName);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
+    public static boolean hasUserOrderedItem(String userEmail, String itemName) {
+        // Only allow rating if the order status is 'Accepted'
+        String sql = "SELECT COUNT(*) FROM orders WHERE user_email = ? AND item_name = ? AND status = 'Accepted'";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, userEmail);
+            pstmt.setString(2, itemName);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public static int getUserRating(String userEmail, String itemName) {
+        String sql = "SELECT rating FROM ratings WHERE user_email = ? AND item_name = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, userEmail);
+            pstmt.setString(2, itemName);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0; // 0 means not rated yet
+    }
+
+    // --- Existing Methods ---
+
     public static boolean placeOrder(String transactionId, String userEmail, String itemName, int quantity, double totalPrice) {
         String sql = "INSERT INTO orders(transaction_id, user_email, item_name, quantity, total_price, status) VALUES(?, ?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);

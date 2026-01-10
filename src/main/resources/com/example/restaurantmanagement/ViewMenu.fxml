@@ -10,28 +10,30 @@
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.restaurantmanagement.ViewMenuController" spacing="10">
-    <padding>
-        <Insets top="10" right="10" bottom="10" left="10"/>
-    </padding>
+<ScrollPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.restaurantmanagement.ViewMenuController" fitToWidth="true" fitToHeight="true">
+    <VBox spacing="10" alignment="TOP_CENTER">
+        <padding>
+            <Insets top="10" right="10" bottom="10" left="10"/>
+        </padding>
 
-    <Label text="Available Menu Items" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+        <Label text="Available Menu Items" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
 
-    <ScrollPane fitToHeight="true" vbarPolicy="NEVER" hbarPolicy="AS_NEEDED" prefHeight="50" minHeight="50" style="-fx-background-color: transparent; -fx-background: transparent;">
-         <HBox fx:id="categoryBox" spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 5;"/>
-    </ScrollPane>
+        <ScrollPane fitToHeight="true" vbarPolicy="NEVER" hbarPolicy="AS_NEEDED" prefHeight="50" minHeight="50" style="-fx-background-color: transparent; -fx-background: transparent;">
+             <HBox fx:id="categoryBox" spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 5;"/>
+        </ScrollPane>
 
-    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
-        <TilePane fx:id="menuTilePane" hgap="15" vgap="15" prefColumns="3" style="-fx-padding: 10;"/>
-    </ScrollPane>
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+            <TilePane fx:id="menuTilePane" hgap="15" vgap="15" prefColumns="3" style="-fx-padding: 10;" alignment="TOP_CENTER"/>
+        </ScrollPane>
 
-    <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #eee; -fx-padding: 10; -fx-background-radius: 5;">
-        <Label text="Selected Item:" style="-fx-font-weight: bold;"/>
-        <Label fx:id="selectedItemLabel" text="None"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Label text="Quantity:"/>
-        <Spinner fx:id="quantitySpinner" min="1" max="10" initialValue="1" editable="true" prefWidth="80"/>
-        <Button text="Add to Cart" onAction="#onAddToCartClick"/>
-    </HBox>
-    <Label fx:id="statusLabel" textFill="blue"/>
-</VBox>
+        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #eee; -fx-padding: 10; -fx-background-radius: 5;">
+            <Label text="Selected Item:" style="-fx-font-weight: bold;"/>
+            <Label fx:id="selectedItemLabel" text="None"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Quantity:"/>
+            <Spinner fx:id="quantitySpinner" min="1" max="10" initialValue="1" editable="true" prefWidth="80"/>
+            <Button text="Add to Cart" onAction="#onAddToCartClick"/>
+        </HBox>
+        <Label fx:id="statusLabel" textFill="blue"/>
+    </VBox>
+</ScrollPane>

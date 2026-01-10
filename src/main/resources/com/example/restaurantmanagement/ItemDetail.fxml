@@ -3,36 +3,54 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.restaurantmanagement.ItemDetailController" spacing="15" alignment="TOP_CENTER">
-    <padding>
-        <Insets top="10" right="10" bottom="10" left="10"/>
-    </padding>
+<ScrollPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.restaurantmanagement.ItemDetailController" fitToWidth="true" fitToHeight="true">
+    <VBox spacing="15" alignment="TOP_CENTER">
+        <padding>
+            <Insets top="10" right="10" bottom="10" left="10"/>
+        </padding>
 
-    <HBox alignment="CENTER_LEFT">
-        <Button text="&lt; Back" onAction="#onBackClick"/>
-    </HBox>
+        <HBox alignment="CENTER_LEFT">
+            <Button text="&lt; Back" onAction="#onBackClick"/>
+        </HBox>
 
-    <ImageView fx:id="detailImageView" fitWidth="300" fitHeight="200" preserveRatio="true"/>
+        <VBox spacing="10" alignment="CENTER" maxWidth="600">
+            <ImageView fx:id="detailImageView" fitWidth="300" fitHeight="200" preserveRatio="true"/>
 
-    <Label fx:id="detailNameLabel" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-    <Label fx:id="detailCategoryLabel" style="-fx-text-fill: gray; -fx-font-size: 14px;"/>
-    <Label fx:id="detailPriceLabel" style="-fx-font-size: 18px; -fx-text-fill: green; -fx-font-weight: bold;"/>
+            <!-- Average Rating Display -->
+            <HBox fx:id="averageRatingBox" alignment="CENTER" spacing="5">
+                <Label text="Avg Rating:"/>
+                <!-- Stars will be added here dynamically -->
+            </HBox>
 
-    <Label text="Description:" style="-fx-font-weight: bold;"/>
-    <Label fx:id="detailDescLabel" wrapText="true" maxWidth="400" style="-fx-font-size: 14px;"/>
+            <Label fx:id="detailNameLabel" style="-fx-font-size: 28px; -fx-font-weight: bold;"/>
+            <Label fx:id="detailCategoryLabel" style="-fx-text-fill: gray; -fx-font-size: 16px;"/>
+            <Label fx:id="detailPriceLabel" style="-fx-font-size: 22px; -fx-text-fill: green; -fx-font-weight: bold;"/>
 
-    <Region VBox.vgrow="ALWAYS"/>
+            <VBox spacing="5" alignment="CENTER_LEFT" style="-fx-background-color: #f9f9f9; -fx-padding: 15; -fx-background-radius: 5;">
+                <Label text="Description:" style="-fx-font-weight: bold;"/>
+                <Label fx:id="detailDescLabel" wrapText="true" style="-fx-font-size: 14px;"/>
+            </VBox>
 
-    <HBox spacing="10" alignment="CENTER">
-        <Label text="Quantity:"/>
-        <Spinner fx:id="detailQuantitySpinner" min="1" max="20" initialValue="1" editable="true" prefWidth="80"/>
-        <Button text="Add to Cart" onAction="#onDetailAddToCartClick" style="-fx-background-color: #007bff; -fx-text-fill: white;"/>
-    </HBox>
-    <Label fx:id="detailStatusLabel" textFill="blue"/>
-</VBox>
+            <!-- User Rating Section -->
+            <VBox fx:id="ratingSection" spacing="10" alignment="CENTER" visible="false" style="-fx-padding: 10; -fx-border-color: #eee; -fx-border-radius: 5;">
+                <Label text="Rate this item:" style="-fx-font-weight: bold;"/>
+                <HBox fx:id="userRatingBox" alignment="CENTER" spacing="5"/>
+                <Label fx:id="ratingStatusLabel" textFill="blue"/>
+            </VBox>
+
+            <HBox spacing="15" alignment="CENTER" style="-fx-padding: 20 0 0 0;">
+                <Label text="Quantity:" style="-fx-font-size: 16px;"/>
+                <Spinner fx:id="detailQuantitySpinner" min="1" max="20" initialValue="1" editable="true" prefWidth="80" style="-fx-font-size: 14px;"/>
+                <Button text="Add to Cart" onAction="#onDetailAddToCartClick" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 8 20;"/>
+            </HBox>
+            <Label fx:id="detailStatusLabel" textFill="blue"/>
+        </VBox>
+    </VBox>
+</ScrollPane>
