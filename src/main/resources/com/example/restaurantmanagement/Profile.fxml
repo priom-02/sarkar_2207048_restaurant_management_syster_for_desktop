@@ -7,42 +7,46 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
 
 <ScrollPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.restaurantmanagement.ProfileController" fitToWidth="true" fitToHeight="true">
-    <VBox spacing="15" alignment="TOP_CENTER">
+    <stylesheets>
+        <URL value="@styles.css" />
+    </stylesheets>
+    <VBox spacing="15" alignment="TOP_CENTER" styleClass="content-box">
         <padding>
             <Insets top="10" right="10" bottom="10" left="10"/>
         </padding>
 
         <HBox alignment="CENTER_LEFT">
-            <Button text="&lt; Back" onAction="#onBackClick"/>
+            <Button text="&lt; Back" onAction="#onBackClick" styleClass="back-button"/>
         </HBox>
 
-        <Label text="User Profile" style="-fx-font-weight: bold; -fx-font-size: 20px;"/>
+        <Label text="User Profile" styleClass="section-title"/>
 
-        <VBox spacing="10" maxWidth="400" alignment="CENTER_LEFT">
+        <VBox spacing="10" maxWidth="400" alignment="CENTER_LEFT" styleClass="card">
             <VBox spacing="5">
-                <Label text="Full Name:" style="-fx-font-weight: bold;"/>
+                <Label text="Full Name:" styleClass="form-label"/>
                 <TextField fx:id="profileNameField"/>
             </VBox>
 
             <VBox spacing="5">
-                <Label text="Email (Cannot be changed):" style="-fx-font-weight: bold;"/>
+                <Label text="Email (Cannot be changed):" styleClass="form-label"/>
                 <TextField fx:id="profileEmailField" editable="false" style="-fx-background-color: #eee;"/>
             </VBox>
 
             <VBox spacing="5">
-                <Label text="Mobile Number:" style="-fx-font-weight: bold;"/>
+                <Label text="Mobile Number:" styleClass="form-label"/>
                 <TextField fx:id="profileMobileField"/>
             </VBox>
 
             <VBox spacing="5">
-                <Label text="Address:" style="-fx-font-weight: bold;"/>
+                <Label text="Address:" styleClass="form-label"/>
                 <TextField fx:id="profileAddressField"/>
             </VBox>
 
-            <Button text="Update Profile" onAction="#onUpdateProfileClick" maxWidth="Infinity" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold;"/>
-            <Label fx:id="profileStatusLabel"/>
+            <Button text="Update Profile" onAction="#onUpdateProfileClick" maxWidth="Infinity" styleClass="action-button"/>
+            <Label fx:id="profileStatusLabel" styleClass="status-label-info"/>
         </VBox>
     </VBox>
 </ScrollPane>

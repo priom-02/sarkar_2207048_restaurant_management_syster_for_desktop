@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
@@ -13,21 +14,26 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.restaurantmanagement.AdminDashboard">
+    <stylesheets>
+        <URL value="@styles.css" />
+    </stylesheets>
+
     <top>
-        <HBox style="-fx-background-color: #222; -fx-padding: 10;" alignment="CENTER_LEFT">
-            <Label text="Admin Dashboard" style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+        <HBox styleClass="header-box" alignment="CENTER_LEFT">
+            <Label text="Admin Dashboard" styleClass="header-label"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Button text="Logout" onAction="#onLogoutClick" style="-fx-background-color: #d9534f; -fx-text-fill: white;"/>
+            <Button text="Logout" onAction="#onLogoutClick" styleClass="danger-button"/>
         </HBox>
     </top>
 
     <left>
-        <VBox spacing="10" style="-fx-background-color: #f0f0f0; -fx-padding: 10; -fx-pref-width: 150;">
-            <Button text="View Menu" onAction="#onViewMenuClick" maxWidth="Infinity"/>
-            <Button text="Add Item" onAction="#onAddItemClick" maxWidth="Infinity"/>
-            <Button text="View Orders" onAction="#onViewOrdersClick" maxWidth="Infinity"/>
+        <VBox styleClass="sidebar-box" spacing="5">
+            <Button text="View Menu" onAction="#onViewMenuClick" maxWidth="Infinity" styleClass="sidebar-button"/>
+            <Button text="Add Item" onAction="#onAddItemClick" maxWidth="Infinity" styleClass="sidebar-button"/>
+            <Button text="View Orders" onAction="#onViewOrdersClick" maxWidth="Infinity" styleClass="sidebar-button"/>
         </VBox>
     </left>
 
@@ -38,89 +44,119 @@
             </padding>
 
             <!-- View Menu View -->
-            <VBox fx:id="viewMenuView" spacing="10" visible="true">
-                <Label text="Menu Management" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
-                <SplitPane dividerPositions="0.4" VBox.vgrow="ALWAYS">
-                    <VBox spacing="10">
-                        <padding>
-                            <Insets top="10" right="10" bottom="10" left="10"/>
-                        </padding>
-                        <Label text="Menu Items" style="-fx-font-weight: bold;"/>
-                        <ListView fx:id="menuListView" VBox.vgrow="ALWAYS"/>
-                    </VBox>
-                    <VBox spacing="10">
-                        <padding>
-                            <Insets top="10" right="10" bottom="10" left="10"/>
-                        </padding>
-                        <Label text="Edit Item" style="-fx-font-weight: bold;"/>
+            <VBox fx:id="viewMenuView" spacing="10" visible="true" styleClass="content-box">
+                <Label text="Menu Management" styleClass="section-title"/>
+                <SplitPane dividerPositions="0.4" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+                    <!-- Left Side: Menu List (Wrapped in ScrollPane) -->
+                    <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent;">
+                        <VBox spacing="10">
+                            <padding>
+                                <Insets top="10" right="10" bottom="10" left="10"/>
+                            </padding>
+                            <Label text="Menu Items" styleClass="sub-title"/>
+                            <ListView fx:id="menuListView" VBox.vgrow="ALWAYS"/>
+                        </VBox>
+                    </ScrollPane>
 
-                        <TextField fx:id="editNameField" promptText="Item Name"/>
-                        <TextField fx:id="editCategoryField" promptText="Category"/>
-                        <TextField fx:id="editPriceField" promptText="Price"/>
-                        <ComboBox fx:id="editStatusComboBox" promptText="Status" prefWidth="200"/>
-                        <TextArea fx:id="editDescriptionField" promptText="Description" prefRowCount="3"/>
+                    <!-- Right Side: Edit Form (Wrapped in ScrollPane) -->
+                    <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent;">
+                        <VBox spacing="10">
+                            <padding>
+                                <Insets top="10" right="10" bottom="10" left="10"/>
+                            </padding>
+                            <Label text="Edit Item" styleClass="sub-title"/>
 
-                        <HBox spacing="10" alignment="CENTER_LEFT">
-                            <Button text="Change Image" onAction="#onEditChooseImageClick"/>
-                            <Label fx:id="editImagePathLabel" text="No image"/>
-                        </HBox>
+                            <VBox spacing="5">
+                                <Label text="Item Name:" styleClass="form-label"/>
+                                <TextField fx:id="editNameField" promptText="Item Name"/>
+                            </VBox>
 
-                        <HBox spacing="10">
-                            <Button text="Update" onAction="#onUpdateClick"/>
-                            <Button text="Delete" onAction="#onDeleteClick"/>
-                        </HBox>
-                        <Label fx:id="editStatusLabel" textFill="red"/>
-                    </VBox>
+                            <VBox spacing="5">
+                                <Label text="Category:" styleClass="form-label"/>
+                                <TextField fx:id="editCategoryField" promptText="Category"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="Price:" styleClass="form-label"/>
+                                <TextField fx:id="editPriceField" promptText="Price"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="Status:" styleClass="form-label"/>
+                                <ComboBox fx:id="editStatusComboBox" promptText="Status" prefWidth="200"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="Description:" styleClass="form-label"/>
+                                <TextArea fx:id="editDescriptionField" promptText="Description" prefRowCount="3"/>
+                            </VBox>
+
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Button text="Change Image" onAction="#onEditChooseImageClick" styleClass="secondary-button"/>
+                                <Label fx:id="editImagePathLabel" text="No image"/>
+                            </HBox>
+
+                            <HBox spacing="10">
+                                <Button text="Update" onAction="#onUpdateClick" styleClass="action-button"/>
+                                <Button text="Delete" onAction="#onDeleteClick" styleClass="danger-button"/>
+                            </HBox>
+                            <Label fx:id="editStatusLabel" styleClass="status-label-info"/>
+                        </VBox>
+                    </ScrollPane>
                 </SplitPane>
             </VBox>
 
             <!-- Add Item View -->
-            <VBox fx:id="addItemView" spacing="15" visible="false">
-                <HBox alignment="CENTER_LEFT">
-                    <Button text="&lt; Back" onAction="#onViewMenuClick"/>
-                </HBox>
-                <Label text="Add New Menu Item" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+            <VBox fx:id="addItemView" spacing="0" visible="false" styleClass="content-box">
+                <ScrollPane fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+                    <VBox spacing="15">
+                        <HBox alignment="CENTER_LEFT">
+                            <Button text="&lt; Back" onAction="#onViewMenuClick" styleClass="back-button"/>
+                        </HBox>
+                        <Label text="Add New Menu Item" styleClass="section-title"/>
 
-                <VBox spacing="5" maxWidth="400">
-                    <Label text="Item Name:"/>
-                    <TextField fx:id="addNameField"/>
-                </VBox>
+                        <VBox spacing="5" maxWidth="400">
+                            <Label text="Item Name:" styleClass="form-label"/>
+                            <TextField fx:id="addNameField"/>
+                        </VBox>
 
-                <VBox spacing="5" maxWidth="400">
-                    <Label text="Category:"/>
-                    <TextField fx:id="addCategoryField"/>
-                </VBox>
+                        <VBox spacing="5" maxWidth="400">
+                            <Label text="Category:" styleClass="form-label"/>
+                            <TextField fx:id="addCategoryField"/>
+                        </VBox>
 
-                <VBox spacing="5" maxWidth="400">
-                    <Label text="Price:"/>
-                    <TextField fx:id="addPriceField"/>
-                </VBox>
+                        <VBox spacing="5" maxWidth="400">
+                            <Label text="Price:" styleClass="form-label"/>
+                            <TextField fx:id="addPriceField"/>
+                        </VBox>
 
-                <VBox spacing="5" maxWidth="400">
-                    <Label text="Status:"/>
-                    <ComboBox fx:id="addStatusComboBox" prefWidth="200"/>
-                </VBox>
+                        <VBox spacing="5" maxWidth="400">
+                            <Label text="Status:" styleClass="form-label"/>
+                            <ComboBox fx:id="addStatusComboBox" prefWidth="200"/>
+                        </VBox>
 
-                <VBox spacing="5" maxWidth="400">
-                    <Label text="Description:"/>
-                    <TextArea fx:id="addDescriptionField" prefRowCount="3"/>
-                </VBox>
+                        <VBox spacing="5" maxWidth="400">
+                            <Label text="Description:" styleClass="form-label"/>
+                            <TextArea fx:id="addDescriptionField" prefRowCount="3"/>
+                        </VBox>
 
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <Button text="Choose Image" onAction="#onAddChooseImageClick"/>
-                    <Label fx:id="addImagePathLabel" text="No image selected"/>
-                </HBox>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Button text="Choose Image" onAction="#onAddChooseImageClick" styleClass="secondary-button"/>
+                            <Label fx:id="addImagePathLabel" text="No image selected"/>
+                        </HBox>
 
-                <Button text="Add Item" onAction="#onAddClick" prefWidth="100"/>
-                <Label fx:id="addStatusLabel" textFill="red"/>
+                        <Button text="Add Item" onAction="#onAddClick" prefWidth="100" styleClass="success-button"/>
+                        <Label fx:id="addStatusLabel" styleClass="status-label-info"/>
+                    </VBox>
+                </ScrollPane>
             </VBox>
 
             <!-- View Orders View -->
-            <VBox fx:id="viewOrdersView" spacing="10" visible="false">
+            <VBox fx:id="viewOrdersView" spacing="10" visible="false" styleClass="content-box">
                 <HBox alignment="CENTER_LEFT">
-                    <Button text="&lt; Back" onAction="#onViewMenuClick"/>
+                    <Button text="&lt; Back" onAction="#onViewMenuClick" styleClass="back-button"/>
                 </HBox>
-                <Label text="All Customer Orders" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+                <Label text="All Customer Orders" styleClass="section-title"/>
                 <ListView fx:id="ordersListView" VBox.vgrow="ALWAYS"/>
             </VBox>
 

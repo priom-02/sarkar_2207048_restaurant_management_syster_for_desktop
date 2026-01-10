@@ -8,26 +8,30 @@
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
 
 <ScrollPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.restaurantmanagement.PaymentController" fitToWidth="true" fitToHeight="true">
-    <VBox spacing="20" alignment="TOP_CENTER">
+    <stylesheets>
+        <URL value="@styles.css" />
+    </stylesheets>
+    <VBox spacing="20" alignment="TOP_CENTER" styleClass="content-box">
         <padding>
             <Insets top="10" right="10" bottom="10" left="10"/>
         </padding>
 
         <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
-            <Button text="&lt; Back to Cart" onAction="#onBackClick"/>
+            <Button text="&lt; Back to Cart" onAction="#onBackClick" styleClass="back-button"/>
         </HBox>
 
         <VBox spacing="20" alignment="CENTER" VBox.vgrow="ALWAYS" maxWidth="400">
-            <Label text="Select Payment Method" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+            <Label text="Select Payment Method" styleClass="section-title"/>
 
             <VBox spacing="5" alignment="CENTER">
-                <Label text="Total Amount:" style="-fx-font-size: 16px;"/>
-                <Label fx:id="paymentTotalLabel" text="\$0.00" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #28a745;"/>
+                <Label text="Total Amount:" styleClass="sub-title"/>
+                <Label fx:id="paymentTotalLabel" text="\$0.00" styleClass="total-label"/>
             </VBox>
 
-            <VBox spacing="15" alignment="CENTER_LEFT" style="-fx-background-color: #f9f9f9; -fx-padding: 20; -fx-background-radius: 10; -fx-border-color: #ddd; -fx-border-radius: 10;">
+            <VBox spacing="15" alignment="CENTER_LEFT" styleClass="payment-option-box">
                 <RadioButton fx:id="cashRadio" text="Cash on Delivery" selected="true" style="-fx-font-size: 14px;">
                     <toggleGroup>
                         <ToggleGroup fx:id="paymentGroup"/>
@@ -37,9 +41,9 @@
                 <RadioButton fx:id="onlineRadio" text="By Online" toggleGroup="$paymentGroup" style="-fx-font-size: 14px;"/>
             </VBox>
 
-            <Button text="Place Order" onAction="#onPlaceOrderClick" prefWidth="200" prefHeight="50" style="-fx-background-color: green; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;"/>
+            <Button text="Place Order" onAction="#onPlaceOrderClick" prefWidth="200" prefHeight="50" styleClass="success-button"/>
 
-            <Label fx:id="paymentStatusLabel" textFill="red"/>
+            <Label fx:id="paymentStatusLabel" styleClass="status-label-error"/>
         </VBox>
     </VBox>
 </ScrollPane>

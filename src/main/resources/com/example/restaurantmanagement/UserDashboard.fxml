@@ -8,26 +8,31 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.restaurantmanagement.UserDashboard">
+    <stylesheets>
+        <URL value="@styles.css" />
+    </stylesheets>
+
     <top>
-        <HBox style="-fx-background-color: #333; -fx-padding: 10;" alignment="CENTER_LEFT">
-            <Label text="User Dashboard" style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+        <HBox styleClass="header-box" alignment="CENTER_LEFT">
+            <Label text="User Dashboard" styleClass="header-label"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Button text="Logout" onAction="#onLogoutClick" style="-fx-background-color: #d9534f; -fx-text-fill: white;"/>
+            <Button text="Logout" onAction="#onLogoutClick" styleClass="danger-button"/>
         </HBox>
     </top>
 
     <left>
-        <VBox spacing="10" style="-fx-background-color: #f4f4f4; -fx-padding: 10; -fx-pref-width: 150;">
-            <Button text="View Menu" onAction="#onViewMenuClick" maxWidth="Infinity"/>
-            <Button text="View Cart" onAction="#onViewCartClick" maxWidth="Infinity"/>
-            <Button text="Order History" onAction="#onOrderHistoryClick" maxWidth="Infinity"/>
-            <Button text="Profile" onAction="#onProfileClick" maxWidth="Infinity"/>
+        <VBox styleClass="sidebar-box" spacing="5">
+            <Button text="View Menu" onAction="#onViewMenuClick" maxWidth="Infinity" styleClass="sidebar-button"/>
+            <Button text="View Cart" onAction="#onViewCartClick" maxWidth="Infinity" styleClass="sidebar-button"/>
+            <Button text="Order History" onAction="#onOrderHistoryClick" maxWidth="Infinity" styleClass="sidebar-button"/>
+            <Button text="Profile" onAction="#onProfileClick" maxWidth="Infinity" styleClass="sidebar-button"/>
         </VBox>
     </left>
 
     <center>
-        <StackPane fx:id="contentArea"/>
+        <StackPane fx:id="contentArea" style="-fx-padding: 0;"/>
     </center>
 </BorderPane>

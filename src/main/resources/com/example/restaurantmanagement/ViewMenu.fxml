@@ -9,31 +9,35 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
 
 <ScrollPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.restaurantmanagement.ViewMenuController" fitToWidth="true" fitToHeight="true">
-    <VBox spacing="10" alignment="TOP_CENTER">
+    <stylesheets>
+        <URL value="@styles.css" />
+    </stylesheets>
+    <VBox spacing="10" alignment="TOP_CENTER" styleClass="content-box">
         <padding>
             <Insets top="10" right="10" bottom="10" left="10"/>
         </padding>
 
-        <Label text="Available Menu Items" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+        <Label text="Available Menu Items" styleClass="section-title"/>
 
-        <ScrollPane fitToHeight="true" vbarPolicy="NEVER" hbarPolicy="AS_NEEDED" prefHeight="50" minHeight="50" style="-fx-background-color: transparent; -fx-background: transparent;">
-             <HBox fx:id="categoryBox" spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 5;"/>
+        <ScrollPane fitToHeight="true" vbarPolicy="NEVER" hbarPolicy="AS_NEEDED" prefHeight="50" minHeight="50" styleClass="category-bar">
+             <HBox fx:id="categoryBox" spacing="10" alignment="CENTER_LEFT"/>
         </ScrollPane>
 
-        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
             <TilePane fx:id="menuTilePane" hgap="15" vgap="15" prefColumns="3" style="-fx-padding: 10;" alignment="TOP_CENTER"/>
         </ScrollPane>
 
-        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: #eee; -fx-padding: 10; -fx-background-radius: 5;">
-            <Label text="Selected Item:" style="-fx-font-weight: bold;"/>
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="card">
+            <Label text="Selected Item:" styleClass="form-label"/>
             <Label fx:id="selectedItemLabel" text="None"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Label text="Quantity:"/>
+            <Label text="Quantity:" styleClass="form-label"/>
             <Spinner fx:id="quantitySpinner" min="1" max="10" initialValue="1" editable="true" prefWidth="80"/>
-            <Button text="Add to Cart" onAction="#onAddToCartClick"/>
+            <Button text="Add to Cart" onAction="#onAddToCartClick" styleClass="action-button"/>
         </HBox>
-        <Label fx:id="statusLabel" textFill="blue"/>
+        <Label fx:id="statusLabel" styleClass="status-label-info"/>
     </VBox>
 </ScrollPane>

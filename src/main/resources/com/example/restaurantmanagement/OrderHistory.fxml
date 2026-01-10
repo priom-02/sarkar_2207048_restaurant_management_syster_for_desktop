@@ -7,18 +7,22 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
 
 <ScrollPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.restaurantmanagement.OrderHistoryController" fitToWidth="true" fitToHeight="true">
-    <VBox spacing="10" alignment="TOP_CENTER">
+    <stylesheets>
+        <URL value="@styles.css" />
+    </stylesheets>
+    <VBox spacing="10" alignment="TOP_CENTER" styleClass="content-box">
         <padding>
             <Insets top="10" right="10" bottom="10" left="10"/>
         </padding>
 
         <HBox alignment="CENTER_LEFT">
-            <Button text="&lt; Back" onAction="#onBackClick"/>
+            <Button text="&lt; Back" onAction="#onBackClick" styleClass="back-button"/>
         </HBox>
 
-        <Label text="Your Past Orders" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+        <Label text="Your Past Orders" styleClass="section-title"/>
         <ListView fx:id="orderHistoryListView" VBox.vgrow="ALWAYS"/>
     </VBox>
 </ScrollPane>

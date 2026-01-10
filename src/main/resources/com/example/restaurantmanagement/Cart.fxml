@@ -8,30 +8,34 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
 
 <ScrollPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.restaurantmanagement.CartController" fitToWidth="true" fitToHeight="true">
-    <VBox spacing="10" alignment="TOP_CENTER">
+    <stylesheets>
+        <URL value="@styles.css" />
+    </stylesheets>
+    <VBox spacing="10" alignment="TOP_CENTER" styleClass="content-box">
         <padding>
             <Insets top="10" right="10" bottom="10" left="10"/>
         </padding>
 
         <HBox alignment="CENTER_LEFT">
-            <Button text="&lt; Back" onAction="#onBackClick"/>
+            <Button text="&lt; Back" onAction="#onBackClick" styleClass="back-button"/>
         </HBox>
 
-        <Label text="Current Order (Cart)" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+        <Label text="Current Order (Cart)" styleClass="section-title"/>
 
         <ListView fx:id="cartListView" VBox.vgrow="ALWAYS"/>
 
         <HBox spacing="10" alignment="CENTER_RIGHT">
-            <Label text="Total: " style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-            <Label fx:id="cartTotalLabel" text="\$0.00" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+            <Label text="Total: " styleClass="form-label"/>
+            <Label fx:id="cartTotalLabel" text="\$0.00" styleClass="total-label"/>
         </HBox>
 
         <HBox spacing="10" alignment="CENTER">
             <Region HBox.hgrow="ALWAYS"/>
-            <Button text="Proceed to Payment" onAction="#onProceedToPaymentClick" style="-fx-background-color: green; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;"/>
+            <Button text="Proceed to Payment" onAction="#onProceedToPaymentClick" styleClass="success-button"/>
         </HBox>
-        <Label fx:id="cartStatusLabel" textFill="blue"/>
+        <Label fx:id="cartStatusLabel" styleClass="status-label-info"/>
     </VBox>
 </ScrollPane>
