@@ -8,6 +8,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public class PaymentController {
 
@@ -64,10 +65,14 @@ public class PaymentController {
             return;
         }
 
+        String transactionId = UUID.randomUUID().toString();
         boolean allSuccess = true;
+
         for (CartItem ci : dashboardController.getCart()) {
-            if (!DatabaseHelper.placeOrder(dashboardController.getCurrentUserEmail(), ci.getItem().getName(), ci.getQuantity(), ci.getTotalPrice())) {
+            if (!DatabaseHelper.placeOrder(transactionId, dashboardController.getCurrentUserEmail(), ci.getItem().getName(), ci.getQuantity(), ci.getTotalPrice())) {
                 allSuccess = false;
+                // **FIX**: Break the loop on the first failure
+                break; 
             }
         }
 
@@ -80,11 +85,12 @@ public class PaymentController {
             success.setContentText("Your order has been placed successfully via " + paymentMethod + "!");
             success.showAndWait();
             
-            // Go back to the main menu after successful order
             dashboardController.onViewMenuClick();
             
         } else {
-            paymentStatusLabel.setText("Some items failed to order. Please try again.");
+            // **FIX**: Provide a specific error message
+            String error = DatabaseHelper.getLastError();
+            paymentStatusLabel.setText("Order failed: " + error);
             paymentStatusLabel.setStyle("-fx-text-fill: red;");
         }
     }

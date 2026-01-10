@@ -14,6 +14,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 public class DatabaseHelper {
     private static final String DB_URL = "jdbc:sqlite:restaurant_management.db";
@@ -38,61 +40,119 @@ public class DatabaseHelper {
         try (Connection conn = DriverManager.getConnection(DB_URL);
              Statement stmt = conn.createStatement()) {
             
-            // 1. users Table
-            String sqlUsers = "CREATE TABLE IF NOT EXISTS users (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "name TEXT NOT NULL," +
-                    "email TEXT NOT NULL UNIQUE," +
-                    "password TEXT NOT NULL," +
-                    "role TEXT DEFAULT 'User'," +
-                    "mobile TEXT," +
-                    "address TEXT" +
-                    ");";
-            stmt.execute(sqlUsers);
-
-            // 2. menu_items Table
-            String sqlMenu = "CREATE TABLE IF NOT EXISTS menu_items (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "item_name TEXT NOT NULL," +
-                    "category TEXT," +
-                    "price REAL NOT NULL," +
-                    "status TEXT DEFAULT 'Available'," +
-                    "description TEXT," +
-                    "image_path TEXT" +
-                    ");";
-            stmt.execute(sqlMenu);
-
-            // 3. orders Table
-            String sqlOrders = "CREATE TABLE IF NOT EXISTS orders (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "user_email TEXT NOT NULL," +
-                    "item_name TEXT NOT NULL," +
-                    "quantity INTEGER NOT NULL," +
-                    "total_price REAL NOT NULL," +
-                    "order_date TEXT DEFAULT CURRENT_TIMESTAMP" +
-                    ");";
-            stmt.execute(sqlOrders);
+            stmt.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, email TEXT NOT NULL UNIQUE, password TEXT NOT NULL, role TEXT DEFAULT 'User', mobile TEXT, address TEXT);");
+            stmt.execute("CREATE TABLE IF NOT EXISTS menu_items (id INTEGER PRIMARY KEY AUTOINCREMENT, item_name TEXT NOT NULL, category TEXT, price REAL NOT NULL, status TEXT DEFAULT 'Available', description TEXT, image_path TEXT);");
+            stmt.execute("CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY AUTOINCREMENT, transaction_id TEXT NOT NULL, user_email TEXT NOT NULL, item_name TEXT NOT NULL, quantity INTEGER NOT NULL, total_price REAL NOT NULL, order_date TEXT DEFAULT CURRENT_TIMESTAMP, status TEXT DEFAULT 'Pending');");
 
             // Migrations
             try { stmt.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'User';"); } catch (SQLException ignore) {}
             try { stmt.execute("ALTER TABLE users ADD COLUMN mobile TEXT;"); } catch (SQLException ignore) {}
             try { stmt.execute("ALTER TABLE users ADD COLUMN address TEXT;"); } catch (SQLException ignore) {}
-            try { stmt.execute("ALTER TABLE menu_items ADD COLUMN category TEXT;"); } catch (SQLException ignore) {}
-            try { stmt.execute("ALTER TABLE menu_items ADD COLUMN status TEXT DEFAULT 'Available';"); } catch (SQLException ignore) {}
-            try { stmt.execute("ALTER TABLE menu_items RENAME COLUMN name TO item_name;"); } catch (SQLException ignore) {}
-            try { stmt.execute("ALTER TABLE menu_items DROP COLUMN available;"); } catch (SQLException ignore) {}
+            try { stmt.execute("ALTER TABLE orders ADD COLUMN transaction_id TEXT;"); } catch (SQLException ignore) {}
+            try { stmt.execute("ALTER TABLE orders ADD COLUMN status TEXT DEFAULT 'Pending';"); } catch (SQLException ignore) {}
 
             System.out.println("Database initialized.");
             return true;
         } catch (SQLException e) {
             lastError = "Init Error: " + e.getMessage();
-            System.out.println("Error initializing database: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
     }
 
-    // ... (hashPassword, registerUser, updateUserProfile, validateUser, getAllUsers, getUserByEmail, addMenuItem, updateMenuItem, deleteMenuItem, getAllMenuItems, storeImageFile, placeOrder methods remain same)
+    // **FIX**: Added more robust error checking and logging
+    public static boolean placeOrder(String transactionId, String userEmail, String itemName, int quantity, double totalPrice) {
+        String sql = "INSERT INTO orders(transaction_id, user_email, item_name, quantity, total_price, status) VALUES(?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, transactionId);
+            pstmt.setString(2, userEmail);
+            pstmt.setString(3, itemName);
+            pstmt.setInt(4, quantity);
+            pstmt.setDouble(5, totalPrice);
+            pstmt.setString(6, "Pending");
+            
+            int rowsAffected = pstmt.executeUpdate();
+            
+            if (rowsAffected > 0) {
+                System.out.println("Successfully placed order for item: " + itemName);
+                return true;
+            } else {
+                lastError = "Place Order Error: The order could not be saved to the database (0 rows affected).";
+                System.err.println(lastError);
+                return false;
+            }
+        } catch (SQLException e) {
+            lastError = "Place Order SQL Error: " + e.getMessage();
+            System.err.println(lastError);
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static List<Order> getAllOrdersWithDetails() {
+        List<Order> orders = new ArrayList<>();
+        String sql = "SELECT o.id, o.transaction_id, o.user_email, o.item_name, o.quantity, o.total_price, o.order_date, o.status, " +
+                     "u.name, u.mobile, u.address " +
+                     "FROM orders o JOIN users u ON o.user_email = u.email " +
+                     "ORDER BY o.order_date DESC";
+        
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                Order order = new Order(
+                    rs.getInt("id"),
+                    rs.getString("user_email"),
+                    rs.getString("item_name"),
+                    rs.getInt("quantity"),
+                    rs.getDouble("total_price"),
+                    rs.getString("order_date"),
+                    rs.getString("status"),
+                    rs.getString("name"),
+                    rs.getString("mobile"),
+                    rs.getString("address")
+                );
+                order.setTransactionId(rs.getString("transaction_id"));
+                orders.add(order);
+            }
+        } catch (SQLException e) {
+            lastError = "Get All Orders Error: " + e.getMessage();
+            e.printStackTrace();
+        }
+        return orders;
+    }
+
+    public static boolean updateOrderStatusByTransaction(String transactionId, String status) {
+        String sql = "UPDATE orders SET status = ? WHERE transaction_id = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, status);
+            pstmt.setString(2, transactionId);
+            pstmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            lastError = "Update Order Status Error: " + e.getMessage();
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public static boolean updateOrderStatus(int orderId, String status) {
+        String sql = "UPDATE orders SET status = ? WHERE id = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, status);
+            pstmt.setInt(2, orderId);
+            pstmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            lastError = "Update Order Status Error: " + e.getMessage();
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     private static String hashPassword(String password) {
         if (password == null) return null;
@@ -318,26 +378,9 @@ public class DatabaseHelper {
         }
     }
 
-    public static boolean placeOrder(String userEmail, String itemName, int quantity, double totalPrice) {
-        String sql = "INSERT INTO orders(user_email, item_name, quantity, total_price) VALUES(?, ?, ?, ?)";
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, userEmail);
-            pstmt.setString(2, itemName);
-            pstmt.setInt(3, quantity);
-            pstmt.setDouble(4, totalPrice);
-            pstmt.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            lastError = "Place Order Error: " + e.getMessage();
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     public static List<String> getOrderHistory(String userEmail) {
         List<String> history = new ArrayList<>();
-        String sql = "SELECT item_name, quantity, total_price, order_date FROM orders WHERE user_email = ? ORDER BY order_date DESC";
+        String sql = "SELECT item_name, quantity, total_price, order_date, status FROM orders WHERE user_email = ? ORDER BY order_date DESC";
         try (Connection conn = DriverManager.getConnection(DB_URL);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, userEmail);
@@ -347,31 +390,11 @@ public class DatabaseHelper {
                 int qty = rs.getInt("quantity");
                 double total = rs.getDouble("total_price");
                 String date = rs.getString("order_date");
-                history.add(String.format("%s | %s x%d | $%.2f", date, item, qty, total));
+                String status = rs.getString("status");
+                history.add(String.format("%s | %s x%d | $%.2f [%s]", date, item, qty, total, status));
             }
         } catch (SQLException e) {
             lastError = "Get History Error: " + e.getMessage();
-            e.printStackTrace();
-        }
-        return history;
-    }
-    
-    public static List<String> getAllOrders() {
-        List<String> history = new ArrayList<>();
-        String sql = "SELECT user_email, item_name, quantity, total_price, order_date FROM orders ORDER BY order_date DESC";
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                String email = rs.getString("user_email");
-                String item = rs.getString("item_name");
-                int qty = rs.getInt("quantity");
-                double total = rs.getDouble("total_price");
-                String date = rs.getString("order_date");
-                history.add(String.format("%s | %s | %s x%d | $%.2f", date, email, item, qty, total));
-            }
-        } catch (SQLException e) {
-            lastError = "Get All Orders Error: " + e.getMessage();
             e.printStackTrace();
         }
         return history;

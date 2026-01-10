@@ -4,8 +4,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -13,7 +15,10 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AdminDashboard {
 
@@ -42,13 +47,12 @@ public class AdminDashboard {
     @FXML private Label addStatusLabel;
 
     // View Orders Components
-    @FXML private ListView<String> allOrdersListView;
+    @FXML private ListView<Order> ordersListView;
 
     private File selectedImageFile = null;
 
     @FXML
     public void initialize() {
-        // Initialize ComboBoxes
         ObservableList<String> statuses = FXCollections.observableArrayList("Available", "Out of Stock");
         if (editStatusComboBox != null) editStatusComboBox.setItems(statuses);
         if (addStatusComboBox != null) {
@@ -58,7 +62,10 @@ public class AdminDashboard {
 
         refreshMenuItems();
         
-        // Default View
+        if (ordersListView != null) {
+            ordersListView.setCellFactory(lv -> new OrderCardCell());
+        }
+        
         showView(viewMenuView);
     }
 
@@ -230,15 +237,37 @@ public class AdminDashboard {
 
     // --- View Orders Logic ---
 
-    @FXML
-    protected void onRefreshOrdersClick() {
-        refreshOrders();
+    private void refreshOrders() {
+        if (ordersListView == null) return;
+        List<Order> groupedOrders = getGroupedOrdersFromDB();
+        ordersListView.setItems(FXCollections.observableArrayList(groupedOrders));
     }
 
-    private void refreshOrders() {
-        if (allOrdersListView == null) return;
-        List<String> orders = DatabaseHelper.getAllOrders();
-        allOrdersListView.setItems(FXCollections.observableArrayList(orders));
+    private List<Order> getGroupedOrdersFromDB() {
+        Map<String, Order> groupedOrdersMap = new LinkedHashMap<>();
+        List<Order> allOrders = DatabaseHelper.getAllOrdersWithDetails();
+
+        if (allOrders == null) return new ArrayList<>();
+
+        for (Order order : allOrders) {
+            String transactionId = order.getTransactionId();
+            if (transactionId == null) continue;
+
+            Order groupedOrder = groupedOrdersMap.get(transactionId);
+            if (groupedOrder == null) {
+                groupedOrder = new Order(
+                    order.getId(), order.getUserEmail(), order.getItemName() + " x" + order.getQuantity(), 
+                    order.getQuantity(), order.getTotalPrice(), order.getOrderDate(), order.getStatus(),
+                    order.getUserName(), order.getUserMobile(), order.getUserAddress()
+                );
+                groupedOrder.setTransactionId(transactionId);
+                groupedOrdersMap.put(transactionId, groupedOrder);
+            } else {
+                groupedOrder.setItemName(groupedOrder.getItemName() + "\n" + order.getItemName() + " x" + order.getQuantity());
+                groupedOrder.setTotalPrice(groupedOrder.getTotalPrice() + order.getTotalPrice());
+            }
+        }
+        return new ArrayList<>(groupedOrdersMap.values());
     }
 
     // --- Helpers ---
@@ -247,7 +276,94 @@ public class AdminDashboard {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Choose Food Image");
         chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif"));
-        Stage stage = (Stage) viewMenuView.getScene().getWindow(); // Use any node to get stage
+        Stage stage = (Stage) viewMenuView.getScene().getWindow();
         return chooser.showOpenDialog(stage);
+    }
+    
+    // --- Inner Class for Order Card ---
+    
+    private class OrderCardCell extends ListCell<Order> {
+        private VBox card = new VBox(10);
+        private Label orderIdLabel = new Label();
+        private Label userDetailsLabel = new Label();
+        private Label orderDetailsLabel = new Label();
+        private Label totalLabel = new Label();
+        private Label statusLabel = new Label();
+        private Button acceptButton = new Button("Accept");
+        private Button removeButton = new Button("Remove");
+        private HBox buttonBox = new HBox(10, acceptButton, removeButton);
+
+        public OrderCardCell() {
+            super();
+            card.setPadding(new Insets(10));
+            card.setStyle("-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;");
+            
+            orderIdLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+            totalLabel.setStyle("-fx-font-weight: bold;");
+            statusLabel.setStyle("-fx-font-weight: bold;");
+            
+            card.getChildren().addAll(orderIdLabel, userDetailsLabel, orderDetailsLabel, totalLabel, statusLabel, buttonBox);
+        }
+
+        @Override
+        protected void updateItem(Order order, boolean empty) {
+            super.updateItem(order, empty);
+            if (empty || order == null) {
+                setGraphic(null);
+            } else {
+                orderIdLabel.setText("Transaction ID: " + order.getTransactionId().substring(0, 8) + "...");
+                userDetailsLabel.setText("User: " + order.getUserName() + " | Mobile: " + order.getUserMobile() + "\nAddress: " + order.getUserAddress());
+                
+                String[] items = order.getItemName().split("\n");
+                StringBuilder itemText = new StringBuilder("Items:\n");
+                for(String item : items) {
+                    itemText.append("  - ").append(item).append("\n");
+                }
+                orderDetailsLabel.setText(itemText.toString());
+                
+                totalLabel.setText(String.format("Total: $%.2f", order.getTotalPrice()));
+                statusLabel.setText("Status: " + order.getStatus());
+                
+                switch (order.getStatus().toLowerCase()) {
+                    case "accepted":
+                        statusLabel.setStyle("-fx-text-fill: green; -fx-font-weight: bold;");
+                        break;
+                    case "removed":
+                        statusLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+                        break;
+                    default:
+                        statusLabel.setStyle("-fx-text-fill: orange; -fx-font-weight: bold;");
+                        break;
+                }
+
+                acceptButton.setOnAction(e -> handleUpdateStatus(order, "Accepted"));
+                removeButton.setOnAction(e -> handleUpdateStatus(order, "Removed"));
+                
+                setGraphic(card);
+            }
+        }
+        
+        private void handleUpdateStatus(Order order, String newStatus) {
+            if (DatabaseHelper.updateOrderStatusByTransaction(order.getTransactionId(), newStatus)) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Order Updated");
+                alert.setHeaderText(null);
+                alert.setContentText("Order for transaction " + order.getTransactionId().substring(0, 8) + "... has been " + newStatus.toLowerCase() + ".");
+                alert.showAndWait();
+                
+                Alert userAlert = new Alert(Alert.AlertType.INFORMATION);
+                userAlert.setTitle("Your Order Status");
+                userAlert.setHeaderText("Update on your recent order");
+                userAlert.setContentText("Your order (ID: " + order.getTransactionId().substring(0, 8) + "...) has been " + newStatus.toLowerCase() + " by the restaurant.");
+                userAlert.show();
+                
+                refreshOrders();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Update Failed");
+                alert.setContentText("Failed to update order status.");
+                alert.showAndWait();
+            }
+        }
     }
 }

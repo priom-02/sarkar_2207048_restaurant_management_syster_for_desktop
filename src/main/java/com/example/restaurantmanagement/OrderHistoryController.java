@@ -19,6 +19,7 @@ public class OrderHistoryController {
 
     private void refreshOrderHistory() {
         if (orderHistoryListView == null) return;
+        // This method now returns a List of formatted strings including the status
         List<String> history = DatabaseHelper.getOrderHistory(dashboardController.getCurrentUserEmail());
         orderHistoryListView.setItems(FXCollections.observableArrayList(history));
     }

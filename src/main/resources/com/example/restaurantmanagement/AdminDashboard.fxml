@@ -121,8 +121,7 @@
                     <Button text="&lt; Back" onAction="#onViewMenuClick"/>
                 </HBox>
                 <Label text="All Customer Orders" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
-                <Button text="Refresh Orders" onAction="#onRefreshOrdersClick"/>
-                <ListView fx:id="allOrdersListView" VBox.vgrow="ALWAYS"/>
+                <ListView fx:id="ordersListView" VBox.vgrow="ALWAYS"/>
             </VBox>
 
         </StackPane>
